@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Shooter 80s</title>
+    <link rel="stylesheet" href="space-shooter.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="hud">
+            <div class="hud-item score">
+                <span class="hud-label">PUNTOS</span>
+                <span class="hud-value" id="scoreDisplay">0</span>
+            </div>
+            <div class="hud-item high-score">
+                <span class="hud-label">RÉCORD</span>
+                <span class="hud-value" id="highScoreDisplay">0</span>
+            </div>
+            <div class="hud-item lives">
+                <span class="hud-label">VIDAS</span>
+                <span class="hud-value" id="livesDisplay">3</span>
+            </div>
+            <div class="hud-item wave">
+                <span class="hud-label">OLAS</span>
+                <span class="hud-value" id="waveDisplay">1</span>
+            </div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+            <div class="scanlines"></div>
+        </div>
+        <div class="overlay" id="startScreen">
+            <div class="title-container">
+                <h1 class="title">SPACE SHOOTER</h1>
+                <div class="title-glow"></div>
+            </div>
+            <div class="retro-border">
+                <div class="controls">
+                    <p><span class="key">←</span> <span class="key">→</span> Mover nave</p>
+                    <p><span class="key">ESPACIO</span> Disparar</p>
+                    <p><span class="key">P</span> Pausar</p>
+                </div>
+            </div>
+            <button class="start-btn" id="startBtn">JUGAR</button>
+        </div>
+        <div class="overlay" id="gameOverScreen" style="display: none;">
+            <h2 class="game-over-title">GAME OVER</h2>
+            <div class="retro-border">
+                <p class="score-label">Puntuación final:</p>
+                <div class="final-score" id="finalScore">0</div>
+                <p id="newHighScore" class="new-record">NUEVO RÉCORD</p>
+            </div>
+            <button class="start-btn" id="retryBtn">REINTENTAR</button>
+        </div>
+        <div class="overlay" id="pauseScreen" style="display: none;">
+            <h1 class="pause-title">PAUSADO</h1>
+            <button class="start-btn" id="resumeBtn">CONTINUAR</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

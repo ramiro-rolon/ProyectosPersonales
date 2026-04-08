@@ -1,0 +1,453 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: hidden;
+    background-image: 
+        radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+}
+
+.game-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.hud {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 600px;
+    flex-wrap: wrap;
+}
+
+.hud-item {
+    background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 2px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hud-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: currentColor;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.hud-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: hudShine 3s infinite;
+}
+
+@keyframes hudShine {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+}
+
+.hud-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.hud-value {
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px currentColor;
+}
+
+.score {
+    border-color: #4ade80;
+    color: #4ade80;
+}
+
+.high-score {
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.lives {
+    border-color: #f87171;
+    color: #f87171;
+}
+
+.wave {
+    border-color: #a78bfa;
+    color: #a78bfa;
+}
+
+.canvas-wrapper {
+    position: relative;
+    border: 4px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 30px rgba(0, 150, 255, 0.3),
+        inset 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.canvas-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1) 0px,
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.3;
+}
+
+canvas {
+    display: block;
+    background: #0a0a20;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(5, 5, 15, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 20;
+    border-radius: 8px;
+}
+
+.title-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.title {
+    font-size: 42px;
+    font-weight: bold;
+    color: #00ffff;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 40px #0088ff,
+        0 0 80px #0088ff;
+    letter-spacing: 4px;
+    animation: titlePulse 2s ease-in-out infinite;
+    text-align: center;
+}
+
+@keyframes titlePulse {
+    0%, 100% { 
+        text-shadow: 
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 40px #0088ff;
+    }
+    50% { 
+        text-shadow: 
+            0 0 20px #00ffff,
+            0 0 40px #00ffff,
+            0 0 60px #0088ff,
+            0 0 80px #0088ff;
+    }
+}
+
+.title-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+    z-index: -1;
+    animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.retro-border {
+    border: 3px solid #00ffff;
+    padding: 20px 30px;
+    margin: 15px 0;
+    position: relative;
+    background: rgba(0, 255, 255, 0.05);
+    box-shadow: 
+        0 0 15px rgba(0, 255, 255, 0.3),
+        inset 0 0 15px rgba(0, 255, 255, 0.1);
+}
+
+.retro-border::before,
+.retro-border::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid #ff00ff;
+}
+
+.retro-border::before {
+    top: -3px;
+    left: -3px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.retro-border::after {
+    bottom: -3px;
+    right: -3px;
+    border-left: none;
+    border-top: none;
+}
+
+.controls {
+    text-align: center;
+}
+
+.controls p {
+    font-size: 14px;
+    margin: 10px 0;
+    color: #aaa;
+}
+
+.key {
+    display: inline-block;
+    background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+    color: #00ffff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin: 0 4px;
+    border: 1px solid #00ffff;
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+.start-btn {
+    background: linear-gradient(180deg, #ff00ff 0%, #aa00aa 100%);
+    color: #fff;
+    border: none;
+    padding: 15px 50px;
+    font-size: 20px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 25px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 
+        0 0 20px rgba(255, 0, 255, 0.5),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    border: 2px solid #ff66ff;
+}
+
+.start-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 0 30px rgba(255, 0, 255, 0.8),
+        0 0 60px rgba(255, 0, 255, 0.4);
+}
+
+.start-btn:hover::before {
+    left: 100%;
+}
+
+.game-over-title {
+    font-size: 48px;
+    color: #ff0055;
+    text-shadow: 
+        0 0 10px #ff0055,
+        0 0 20px #ff0055,
+        0 0 40px #ff0055;
+    letter-spacing: 5px;
+    margin-bottom: 20px;
+    animation: gameOverFlash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes gameOverFlash {
+    0% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.score-label {
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.final-score {
+    font-size: 48px;
+    color: #4ade80;
+    text-shadow: 0 0 20px #4ade80;
+    font-weight: bold;
+}
+
+.new-record {
+    font-size: 20px;
+    color: #fbbf24;
+    text-shadow: 0 0 15px #fbbf24;
+    margin-top: 15px;
+    animation: recordPulse 0.5s ease-in-out infinite alternate;
+    display: none;
+}
+
+.new-record.show {
+    display: block;
+}
+
+@keyframes recordPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+.pause-title {
+    font-size: 36px;
+    color: #fbbf24;
+    text-shadow: 
+        0 0 10px #fbbf24,
+        0 0 20px #fbbf24;
+    letter-spacing: 5px;
+    margin-bottom: 30px;
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        padding: 10px;
+    }
+    
+    .hud {
+        gap: 6px;
+    }
+    
+    .hud-item {
+        padding: 8px 12px;
+        min-width: 70px;
+        flex: 1;
+    }
+    
+    .hud-label {
+        font-size: 8px;
+    }
+    
+    .hud-value {
+        font-size: 18px;
+    }
+    
+    .title {
+        font-size: 28px;
+    }
+    
+    .start-btn {
+        padding: 12px 35px;
+        font-size: 16px;
+    }
+    
+    .retro-border {
+        padding: 15px 20px;
+    }
+    
+    .controls p {
+        font-size: 12px;
+    }
+    
+    .game-over-title {
+        font-size: 32px;
+    }
+    
+    .final-score {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 400px) {
+    .hud-item {
+        padding: 6px 8px;
+        min-width: 60px;
+    }
+    
+    .hud-label {
+        font-size: 7px;
+        letter-spacing: 1px;
+    }
+    
+    .hud-value {
+        font-size: 16px;
+    }
+    
+    .title {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+}
