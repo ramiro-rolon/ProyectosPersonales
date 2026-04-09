@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuesto de Cortinas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .precio-info {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .precio-info span {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .form-section {
+            padding: 25px;
+        }
+
+        .cortina-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            border: 2px solid #e9ecef;
+            transition: border-color 0.3s;
+        }
+
+        .cortina-card:hover {
+            border-color: #667eea;
+        }
+
+        .cortina-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .cortina-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .btn-eliminar {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.3s;
+        }
+
+        .btn-eliminar:hover {
+            background: #c0392b;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-agregar {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-agregar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-agregar:active {
+            transform: translateY(0);
+        }
+
+        .resumen {
+            padding: 25px;
+            background: #2c3e50;
+            color: white;
+        }
+
+        .resumen h3 {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .resumen-item:last-child {
+            border-bottom: none;
+        }
+
+        .resumen-total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 2px solid #667eea;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .total-precio {
+            color: #4ade80;
+        }
+
+        .btn-limpiar {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .btn-limpiar:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Presupuesto de Cortinas</h1>
+            <p>Calculadora de precios por metro cuadrado</p>
+        </div>
+        
+        <div class="precio-info">
+            <span>Precio por m²: $25,000</span>
+        </div>
+
+        <div class="form-section">
+            <div id="cortinas-container"></div>
+            
+            <button class="btn-agregar" onclick="agregarCortina()">
+                + Agregar Cortina
+            </button>
+        </div>
+
+        <div class="resumen">
+            <h3>Resumen del Pedido</h3>
+            <div id="resumen-container"></div>
+            <div class="resumen-total">
+                <span>Total:</span>
+                <span class="total-precio" id="total">$0</span>
+            </div>
+            <button class="btn-limpiar" onclick="limpiarTodo()">Limpiar Todo</button>
+        </div>
+    </div>
+
+    <script>
+        const PRECIO_M2 = 25000;
+        let cortinas = [];
+        let cortinaId = 0;
+
+        function agregarCortina() {
+            const id = cortinaId++;
+            cortinas.push({ id, ancho: 0, alto: 0 });
+            renderCortinas();
+            actualizarResumen();
+        }
+
+        function eliminarCortina(id) {
+            cortinas = cortinas.filter(c => c.id !== id);
+            renderCortinas();
+            actualizarResumen();
+        }
+
+        function actualizarCortina(id, dimension, valor) {
+            const cortina = cortinas.find(c => c.id === id);
+            if (cortina) {
+                cortina[dimension] = parseFloat(valor) || 0;
+                actualizarResumen();
+            }
+        }
+
+        function calcularArea(ancho, alto) {
+            return ancho * alto;
+        }
+
+        function calcularSubtotal(ancho, alto) {
+            return calcularArea(ancho, alto) * PRECIO_M2;
+        }
+
+        function formatCurrency(valor) {
+            return '$' + valor.toLocaleString('es-CO');
+        }
+
+        function renderCortinas() {
+            const container = document.getElementById('cortinas-container');
+            container.innerHTML = cortinas.map((cortina, index) => `
+                <div class="cortina-card">
+                    <div class="cortina-header">
+                        <span class="cortina-title">Cortina ${index + 1}</span>
+                        <button class="btn-eliminar" onclick="eliminarCortina(${cortina.id})">Eliminar</button>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Ancho (m)</label>
+                            <input type="number" 
+                                   min="0" 
+                                   step="0.01" 
+                                   placeholder="Ej: 1.50"
+                                   value="${cortina.ancho || ''}"
+                                   onchange="actualizarCortina(${cortina.id}, 'ancho', this.value)">
+                        </div>
+                        <div class="input-group">
+                            <label>Alto (m)</label>
+                            <input type="number" 
+                                   min="0" 
+                                   step="0.01" 
+                                   placeholder="Ej: 2.00"
+                                   value="${cortina.alto || ''}"
+                                   onchange="actualizarCortina(${cortina.id}, 'alto', this.value)">
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: #667eea; font-weight: bold; margin-top: 10px;">
+                        ${cortina.ancho > 0 && cortina.alto > 0 ? 
+                            `${cortina.ancho} x ${cortina.alto} = ${cortina.ancho * cortina.alto} m²` : 
+                            'Ingrese las medidas'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function actualizarResumen() {
+            const container = document.getElementById('resumen-container');
+            let subtotalTotal = 0;
+            let totalArea = 0;
+
+            const resumenHTML = cortinas.map((cortina, index) => {
+                const area = calcularArea(cortina.ancho, cortina.alto);
+                const subtotal = calcularSubtotal(cortina.ancho, cortina.alto);
+                subtotalTotal += subtotal;
+                totalArea += area;
+
+                return `
+                    <div class="resumen-item">
+                        <span>Cortina ${index + 1} (${area.toFixed(2)} m²)</span>
+                        <span>${formatCurrency(subtotal)}</span>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="resumen-item">
+                    <span>Cantidad de cortinas</span>
+                    <span>${cortinas.length}</span>
+                </div>
+                <div class="resumen-item">
+                    <span>Área total</span>
+                    <span>${totalArea.toFixed(2)} m²</span>
+                </div>
+                ${resumenHTML}
+            `;
+
+            document.getElementById('total').textContent = formatCurrency(subtotalTotal);
+        }
+
+        function limpiarTodo() {
+            cortinas = [];
+            cortinaId = 0;
+            renderCortinas();
+            actualizarResumen();
+        }
+
+        agregarCortina();
+    </script>
+</body>
+</html>
