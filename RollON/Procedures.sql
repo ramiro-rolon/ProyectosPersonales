@@ -5,10 +5,12 @@ DELIMITER //
 -- 1. Agregar nueva tela
 CREATE PROCEDURE sp_agregar_tela(
     IN p_nombre VARCHAR(100),
-    IN p_precio DECIMAL(10,2)
+    IN p_precio DECIMAL(10,2),
+    IN p_ancho_max DECIMAL(10,2)
 )
 BEGIN
-    INSERT INTO Telas (nombre_tela, precio_m2) VALUES (p_nombre, p_precio);
+    INSERT INTO Telas (nombre_tela, precio_m2, ancho_maximo_tela) 
+    VALUES (p_nombre, p_precio, p_ancho_max);
 END //
 
 -- 2. Agregar nuevo dispositivo (mecanismo)
@@ -95,13 +97,4 @@ BEGIN
     WHERE id_pedido = p_id_pedido;
 END //
 
-CREATE PROCEDURE sp_agregar_tela(
-    IN p_nombre VARCHAR(100),
-    IN p_precio DECIMAL(10,2),
-    IN p_ancho_max DECIMAL(10,2)
-)
-BEGIN
-    INSERT INTO Telas (nombre_tela, precio_m2, ancho_maximo_tela) 
-    VALUES (p_nombre, p_precio, p_ancho_max);
-END //
 DELIMITER ;
