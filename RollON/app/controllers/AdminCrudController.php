@@ -1,20 +1,21 @@
 <?php
+require_once __DIR__ . '/../controllers/AuthController.php';
 require_once __DIR__ . '/../models/TelaModel.php';
 require_once __DIR__ . '/../models/DispositivoModel.php';
 require_once __DIR__ . '/../models/ExtraModel.php';
 
-class AdminCrudController {
+class AdminCrudController extends AuthController {
     private $telaModel;
     private $dispositivoModel;
     private $extraModel;
 
     public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        parent::__construct();
+        $this->requireAuth();
         
-        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            header('Location: /admin/login');
+        $user = $this->getUser();
+        if ($user['rol'] !== 'admin') {
+            header('Location: /cliente/cotizador');
             exit;
         }
         

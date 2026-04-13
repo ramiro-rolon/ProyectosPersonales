@@ -5,12 +5,10 @@ DELIMITER //
 -- 1. Agregar nueva tela
 CREATE PROCEDURE sp_agregar_tela(
     IN p_nombre VARCHAR(100),
-    IN p_precio DECIMAL(10,2),
-    IN p_ancho_max DECIMAL(10,2)
+    IN p_precio DECIMAL(10,2)
 )
 BEGIN
-    INSERT INTO Telas (nombre_tela, precio_m2, ancho_maximo_tela) 
-    VALUES (p_nombre, p_precio, p_ancho_max);
+    INSERT INTO Telas (nombre_tela, precio_m2) VALUES (p_nombre, p_precio);
 END //
 
 -- 2. Agregar nuevo dispositivo (mecanismo)
@@ -36,11 +34,13 @@ END //
 
 -- 4. Iniciar un nuevo Pedido (Devuelve el ID generado)
 CREATE PROCEDURE sp_crear_pedido(
-    IN p_cliente VARCHAR(100),
+    IN p_id_cliente INT, 
     OUT p_id_generado INT
 )
 BEGIN
-    INSERT INTO Pedidos (nombre_cliente, estado) VALUES (p_cliente, 'Presupuesto');
+    INSERT INTO Pedidos (id_cliente, estado) 
+    VALUES (p_id_cliente, 'Presupuesto');
+    
     SET p_id_generado = LAST_INSERT_ID();
 END //
 
@@ -97,4 +97,128 @@ BEGIN
     WHERE id_pedido = p_id_pedido;
 END //
 
+CREATE PROCEDURE sp_agregar_tela(
+    IN p_nombre VARCHAR(100),
+    IN p_precio DECIMAL(10,2),
+    IN p_ancho_max DECIMAL(10,2)
+)
+BEGIN
+    INSERT INTO Telas (nombre_tela, precio_m2, ancho_maximo_tela) 
+    VALUES (p_nombre, p_precio, p_ancho_max);
+END //
+
+-- 7. Procedimiento para dar de alta al cliente y obtener su ID
+CREATE PROCEDURE sp_registrar_usuario(
+    IN p_nombre VARCHAR(50),
+    IN p_apellido VARCHAR(50),
+    IN p_contacto VARCHAR(20),
+    IN p_email VARCHAR(100),
+    IN p_password VARCHAR(255),
+    IN p_rol ENUM('cliente', 'admin'),
+    OUT p_id_generado INT
+)
+BEGIN
+    INSERT INTO Clientes (nombre, apellido, contacto, email, password, rol, cuenta_activa) 
+    VALUES (p_nombre, p_apellido, p_contacto, p_email, p_password, p_rol, 'pendiente');
+    
+    SET p_id_generado = LAST_INSERT_ID();
+END //
+
+
+-- 8. Trae la información del cliente y los ítems del pedido
+
+CREATE PROCEDURE sp_obtener_detalle_pedido(IN p_id_pedido INT)
+BEGIN
+    SELECT 
+        id_pedido,
+        cliente_nombre,
+        cliente_apellido,
+        cliente_contacto,
+        nombre_tela,
+        ancho,
+        largo,
+        nombre_dispositivo,
+        subtotal_cortina,
+        total_pedido,
+        estado
+    FROM vista_detalle_presupuesto
+    WHERE id_pedido = p_id_pedido;
+END //
+
+-- 9. Obtenemos los datos necesarios para validar en codigo y armar la sesión
+
+CREATE PROCEDURE sp_login_usuario(IN p_email VARCHAR(100))
+BEGIN
+    SELECT id_cliente, nombre, apellido, email, password, rol, cuenta_activa 
+    FROM Clientes 
+    WHERE LOWER(email) = LOWER(p_email)
+    LIMIT 1;
+END //
+
+-- 10. Cambiamos los datos de los usuarios
+
+CREATE PROCEDURE sp_actualizar_usuario(
+    IN p_id_usuario INT,
+    IN p_nombre VARCHAR(50),
+    IN p_apellido VARCHAR(50),
+    IN p_contacto VARCHAR(20),
+    IN p_email VARCHAR(100)
+)
+BEGIN
+    UPDATE Clientes 
+    SET nombre = p_nombre, 
+        apellido = p_apellido, 
+        contacto = p_contacto, 
+        email = p_email
+    WHERE id_cliente = p_id_usuario;
+END //
+
+-- 11. SP para el cambio de password
+
+CREATE PROCEDURE sp_actualizar_password(
+    IN p_id_usuario INT,
+    IN p_nueva_password VARCHAR(255)
+)
+BEGIN
+    UPDATE Clientes 
+    SET password = p_nueva_password 
+    WHERE id_cliente = p_id_usuario;
+END //
+
+-- 12. Asi se le puede dar un aprobado a un cliente o no 
+
+CREATE PROCEDURE sp_gestionar_solicitud(
+    IN p_id_usuario INT,
+    IN p_nuevo_estado ENUM('pendiente', 'aprobado', 'rechazado')
+)
+BEGIN
+    UPDATE Clientes 
+    SET cuenta_activa = p_nuevo_estado 
+    WHERE id_cliente = p_id_usuario;
+END //
+
+-- 13. Login por nombre y apellido
+
+CREATE PROCEDURE sp_login_nombre_apellido(
+    IN p_nombre VARCHAR(50),
+    IN p_apellido VARCHAR(50)
+)
+BEGIN
+    SELECT id_cliente, nombre, apellido, email, password, rol, cuenta_activa 
+    FROM Clientes 
+    WHERE LOWER(nombre) = p_nombre AND LOWER(apellido) = p_apellido
+    LIMIT 1;
+END //
+
+
 DELIMITER ;
+
+
+INSERT INTO Clientes (nombre, apellido, contacto, email, password, rol, cuenta_activa)
+VALUES ('Daniel', 'Rolon', '223586626', 'danielrolon583@gmail.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'aprobado');
+
+-- 1. Verificar que el usuario existe
+SELECT id_cliente, email, password, rol, cuenta_activa FROM Clientes;
+
+-- 2. Probar el SP manualmente
+CALL sp_login_usuario('danielrolon583@gmail.com');

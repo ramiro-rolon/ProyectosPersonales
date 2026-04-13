@@ -1,30 +1,18 @@
 <?php
+require_once __DIR__ . '/../core/Database.php';
 require_once __DIR__ . '/../models/PedidoModel.php';
+require_once __DIR__ . '/../controllers/AuthController.php';
 
-class PedidoController {
+class PedidoController extends AuthController {
     private $pedidoModel;
 
     public function __construct() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            header('Location: /admin/login');
-            exit;
-        }
-        
+        parent::__construct();
+        $this->requireAuth();
         $this->pedidoModel = new PedidoModel();
     }
 
     public function index() {
-        $pedidos = $this->pedidoModel->getAll();
-        require_once __DIR__ . '/../views/admin/pedidos.php';
-    }
-
-    public function listar() {
-        header('Content-Type: application/json');
-        
         $filtro = [
             'estado' => $_GET['estado'] ?? 'Todos',
             'buscar' => $_GET['buscar'] ?? ''
@@ -37,6 +25,18 @@ class PedidoController {
             $pedido['cantidad_cortinas'] = count($detalles['cortinas']);
         }
         
+        require_once __DIR__ . '/../views/admin/pedidos.php';
+    }
+
+    public function listar() {
+        header('Content-Type: application/json');
+        
+        $filtro = [
+            'estado' => $_GET['estado'] ?? 'Todos',
+            'buscar' => $_GET['buscar'] ?? ''
+        ];
+        
+        $pedidos = $this->pedidoModel->getAllConDetalles($filtro);
         echo json_encode($pedidos);
     }
 
@@ -54,6 +54,15 @@ class PedidoController {
         }
         
         $detalles = $this->pedidoModel->getDetalles($id);
+        
+        $cliente = null;
+        if (!empty($detalles['cortinas'])) {
+            $primeraCortina = $detalles['cortinas'][0];
+            $cliente = [
+                'nombre' => $primeraCortina['nombre_tela'] ?? 'Cliente'
+            ];
+        }
+        
         require_once __DIR__ . '/../views/admin/pedido_detalle.php';
     }
 

@@ -10,14 +10,7 @@
         :root { --primary: #e94560; --dark: #16213e; --success: #28a745; --danger: #dc3545; }
         body { background: #f5f6fa; min-height: 100vh; }
         
-        .header {
-            background: var(--dark);
-            color: #fff;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .header { background: var(--dark); color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { color: var(--primary); font-size: 1.5rem; }
         .header a { color: #fff; text-decoration: none; margin-left: 1rem; }
         .header a:hover { color: var(--primary); }

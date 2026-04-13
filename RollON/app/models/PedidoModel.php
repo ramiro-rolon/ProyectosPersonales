@@ -2,9 +2,9 @@
 require_once __DIR__ . '/Model.php';
 
 class PedidoModel extends Model {
-    public function crear($nombreCliente) {
+    public function crear($idCliente) {
         $sql = "CALL sp_crear_pedido(?, @id)";
-        $this->db->query($sql, [$nombreCliente]);
+        $this->db->query($sql, [$idCliente]);
         $result = $this->db->fetchOne("SELECT @id AS id");
         return $result['id'];
     }
@@ -27,8 +27,18 @@ class PedidoModel extends Model {
         return $this->db->fetchOne("SELECT * FROM Pedidos WHERE id_pedido = ?", [$id]);
     }
 
+    public function getByCliente($idCliente) {
+        return $this->db->fetchAll(
+            "SELECT * FROM Pedidos WHERE id_cliente = ? ORDER BY fecha_creacion DESC",
+            [$idCliente]
+        );
+    }
+
     public function getAll($filtro = []) {
-        $sql = "SELECT * FROM Pedidos WHERE 1=1";
+        $sql = "SELECT id_pedido, fecha_creacion, estado, total_pedido, 
+                    GROUP_CONCAT(CONCAT(cliente_nombre, ' ', cliente_apellido) SEPARATOR ', ') as cliente_nombre
+             FROM vista_detalle_presupuesto 
+             WHERE 1=1";
         $params = [];
 
         if (!empty($filtro['estado']) && $filtro['estado'] !== 'Todos') {
@@ -37,14 +47,27 @@ class PedidoModel extends Model {
         }
 
         if (!empty($filtro['buscar'])) {
-            $sql .= " AND (nombre_cliente LIKE ? OR id_pedido = ?)";
+            $sql .= " AND (cliente_nombre LIKE ? OR cliente_apellido LIKE ? OR id_pedido = ?)";
+            $params[] = '%' . $filtro['buscar'] . '%';
             $params[] = '%' . $filtro['buscar'] . '%';
             $params[] = (int)$filtro['buscar'];
         }
 
+        $sql .= " GROUP BY id_pedido, fecha_creacion, estado, total_pedido";
         $sql .= " ORDER BY fecha_creacion DESC";
 
         return $this->db->fetchAll($sql, $params);
+    }
+
+    public function getAllConDetalles($filtro = []) {
+        $pedidos = $this->getAll($filtro);
+        
+        foreach ($pedidos as &$pedido) {
+            $detalles = $this->getDetalles($pedido['id_pedido']);
+            $pedido['cantidad_cortinas'] = count($detalles['cortinas']);
+        }
+        
+        return $pedidos;
     }
 
     public function getDetalles($idPedido) {

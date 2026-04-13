@@ -10,39 +10,17 @@
         :root { --primary: #e94560; --dark: #16213e; --success: #28a745; --danger: #dc3545; }
         body { background: #f5f6fa; min-height: 100vh; }
         
-        .header {
-            background: var(--dark);
-            color: #fff;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .header { background: var(--dark); color: #fff; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { color: var(--primary); font-size: 1.5rem; }
         .header a { color: #fff; text-decoration: none; margin-left: 1rem; }
         .header a:hover { color: var(--primary); }
         
         .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
         
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .page-header h2 { color: var(--dark); }
         
-        .filters {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        .filters { background: #fff; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
         
         .filters .form-group { margin: 0; display: flex; align-items: center; gap: 0.5rem; }
         .filters label { font-weight: 500; color: #666; white-space: nowrap; }
@@ -137,7 +115,7 @@
 </head>
 <body>
     <div class="header">
-        <h1><i class="fas fa-shopping-cart"></i> Pedidos</h1>
+        <h1><i class="fas fa-file-alt"></i> Pedidos</h1>
         <div>
             <a href="/admin"><i class="fas fa-home"></i> Dashboard</a>
             <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
@@ -233,7 +211,7 @@
                     tbody.innerHTML = data.map(p => `
                         <tr>
                             <td>#${p.id_pedido}</td>
-                            <td>${escapeHtml(p.nombre_cliente)}</td>
+                            <td>${escapeHtml(p.cliente_nombre || 'Cliente')}</td>
                             <td>${formatearFecha(p.fecha_creacion)}</td>
                             <td>${p.cantidad_cortinas || 0}</td>
                             <td><strong>$${parseFloat(p.total_pedido).toFixed(2)}</strong></td>
@@ -246,7 +224,7 @@
                                 </select>
                             </td>
                             <td class="actions">
-                                <a href="/admin/pedidos/ver/${p.id_pedido}" class="btn-view">
+                                <a href="/admin/detalle/${p.id_pedido}" class="btn-view">
                                     Ver <i class="fas fa-eye"></i>
                                 </a>
                             </td>

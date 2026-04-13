@@ -28,13 +28,24 @@ CREATE TABLE Extras (
 -- 4. Tabla de Pedidos (Encabezado)
 CREATE TABLE Pedidos (
     id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT NOT NULL,
     fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    nombre_cliente VARCHAR(100),
     -- El estado ayuda a filtrar: 'Presupuesto', 'Confirmado', 'Terminado', 'Entregado'
     estado ENUM('Presupuesto', 'En Produccion', 'Listo', 'Entregado', 'Cancelado') DEFAULT 'Presupuesto',
-    total_pedido DECIMAL(10, 2) DEFAULT 0.00
+    total_pedido DECIMAL(10, 2) DEFAULT 0.00,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente) ON DELETE CASCADE
 );
 
+-- 1. Identificamos y borramos la relación actual
+-- (XAMPP suele ponerle nombres automáticos si no lo definimos, 
+-- pero aquí usamos el nombre estándar que veníamos manejando)
+ALTER TABLE Pedidos DROP FOREIGN KEY fk_pedido_cliente;
+
+-- 2. Creamos la nueva relación con la regla CASCADE
+ALTER TABLE Pedidos 
+ADD CONSTRAINT fk_pedido_cliente 
+FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente) 
+ON DELETE CASCADE;
 -- 5. Tabla de Cortinas (Detalle del Pedido)
 -- Aquí se guarda cada cortina específica solicitada
 CREATE TABLE Cortinas (
@@ -63,3 +74,15 @@ CREATE TABLE Pedido_Extras (
 );
 
 
+-- 7 Tabla de Clientes
+CREATE TABLE Clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    password VARCHAR(255) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    contacto VARCHAR(20), -- Teléfono o Celular
+    email VARCHAR(100) UNIQUE NOT NULL,
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rol ENUM('admin','çliente')DEFAULT 'cliente',
+    cuenta_activa ENUM('pendiente','aprobado','rechazado') DEFAULT 'pendiente'
+);
